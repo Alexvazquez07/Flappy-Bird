@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  background-color: #70c5ce;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+canvas {
+  background: #fff;
+  border: 2px solid #000;
+}
+#restartBtn {
+  padding: 10px;
+  background-color: #000;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  border: 0px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+#restartBtn:hover {
+  background-color: #919191;
+  transition: background-color 0.5s ease;
+}
