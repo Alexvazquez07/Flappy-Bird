@@ -155,12 +155,12 @@ document.addEventListener("keydown", e => {
   if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Keyw") {
     bird.jump();
   }
+});
 document.addEventListener("mousedown", e => {
   if (e.button === 0) { // 0 es el botón izquierdo
     bird.jump();
   }
 });
 
-});
 
 loop();
