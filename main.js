@@ -178,4 +178,7 @@ document.addEventListener("mousedown", e => {
     bird.jump();
   }
 });
+
+});
+
 loop();
