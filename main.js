@@ -7,7 +7,6 @@ const JUMP = -5 ;
 let gameOver = false;
 
 let highScore = localStorage.getItem("highScore") || 0;
-const trophyImg = document.getElementById("trophyImg");
 // Pájaro
 const birdImage = new Image();
 birdImage.src = "img/Pajaro-removebg-preview.png";
