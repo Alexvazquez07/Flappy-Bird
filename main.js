@@ -6,6 +6,8 @@ const GRAVITY = 0.2 ;
 const JUMP = -5 ;
 let gameOver = false;
 
+let highScore = localStorage.getItem("highScore") || 0;
+const trophyImg = document.getElementById("trophyImg");
 // Pájaro
 const birdImage = new Image();
 birdImage.src = "img/Pajaro-removebg-preview.png";
@@ -109,6 +111,7 @@ function loop() {
   //if (frames % 300 === 0) {
   //  pipeSpeed += 0.2;
   //}
+
   if (gameOver) {
   // Fondo rojo translúcido
   ctx.fillStyle = "rgba(255,0,0,0.8)";
@@ -125,13 +128,27 @@ function loop() {
   ctx.font = "24px sans-serif";
   ctx.fillText(`Score: ${score}`, canvas.width / 2, 320);
 
+  // High Score
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("highScore", highScore);
+  }
+  // Mostrar High Score
+  ctx.font = "24px sans-serif";
+  ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 350);
+
   // Mostrar Botón de reinicio
   document.getElementById("restartBtn").style.display = "block";
   const restartBtn = document.getElementById("restartBtn");
     restartBtn.addEventListener("click", () => {
     location.reload(); // Recarga la página
-});
+  });
 
+  document.addEventListener("keydown", e => {
+  if (e.code === "Enter" || e.code === "Space") {
+    location.reload(); // Recarga la página al presionar Enter o Space
+  }
+  });
   return;
 }
 
@@ -155,12 +172,10 @@ document.addEventListener("keydown", e => {
   if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Keyw") {
     bird.jump();
   }
+});
 document.addEventListener("mousedown", e => {
   if (e.button === 0) { // 0 es el botón izquierdo
     bird.jump();
   }
 });
-
-});
-
 loop();
