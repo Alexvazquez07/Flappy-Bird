@@ -50,12 +50,12 @@ const bird = {
 
 // Tuberías
 const pipes = [];
-const pipeGap = 125;
+const pipeGap = 150;
 const pipeWidth = 50;
 let score = 0;
 
 function createPipe() {
-  const topHeight = Math.floor(Math.random() * 200) + 50;
+  const topHeight = Math.floor(Math.random() * 560);
   const bottomY = topHeight + pipeGap;
   pipes.push({
     x: canvas.width,
@@ -69,6 +69,7 @@ function drawPipes() {
   pipes.forEach(pipe => {
     ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
     ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
+    pipe.bottom = pipe.top + pipeGap; // Asegurar que el espacio entre tuberías sea constante
   });
 }
 let pipeSpeed = 3;
