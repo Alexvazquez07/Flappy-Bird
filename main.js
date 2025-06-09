@@ -71,11 +71,19 @@ function drawPipes() {
     ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
   });
 }
-const pipeSpeed = 3;
+let pipeSpeed = 3;
+
 function updatePipes() {
   pipes.forEach((pipe, index) => {
     pipe.x -= pipeSpeed; ;
 
+    if (pipe.x + pipeWidth < bird.x && !pipe.passed) {
+      pipe.passed = true;
+      score++;
+      if (score % 4 === 0) {
+        pipeSpeed += 0.5; // Aumentar velocidad cada 7 puntos
+      }
+    }
     // Colisión
     if (
       bird.x < pipe.x + pipeWidth &&
