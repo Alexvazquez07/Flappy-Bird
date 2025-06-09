@@ -164,7 +164,7 @@ function loop() {
   bird.update();
   bird.draw();
 
-  if (frames % 100 === 0) {
+  if (frames % 130 === 0) {
     createPipe();
   }
 
