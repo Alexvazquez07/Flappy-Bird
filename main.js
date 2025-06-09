@@ -6,7 +6,7 @@ const GRAVITY = 0.2 ;
 const JUMP = -5 ;
 let gameOver = false;
 
-let highScore = localStorage.getItem("highScore") || 0;
+let highScore = localStorage.getItem("highScore_flappy") || 0;
 // Pájaro
 const birdImage = new Image();
 birdImage.src = "img/Pajaro-removebg-preview.png";
@@ -138,7 +138,7 @@ function loop() {
   // High Score
   if (score > highScore) {
     highScore = score;
-    localStorage.setItem("highScore", highScore);
+    localStorage.setItem("highScore_flappy", highScore);
   }
   // Mostrar High Score
   ctx.font = "24px sans-serif";
