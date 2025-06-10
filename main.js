@@ -55,7 +55,7 @@ const pipeWidth = 50;
 let score = 0;
 
 function createPipe() {
-  const topHeight = Math.floor(Math.random() * 560);
+  const topHeight = Math.floor(Math.random() * 475) + 50;
   const bottomY = topHeight + pipeGap;
   pipes.push({
     x: canvas.width,
