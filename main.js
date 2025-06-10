@@ -195,9 +195,6 @@ function setupEventListeners() {
 
   document.getElementById("restartBtn").addEventListener("click", resetGame);
 
-  document.getElementById("see_controls").addEventListener("click", () => {
-    alert("Controles:\n\n- Espacio / W / Flecha arriba para saltar\n- Click izquierdo también salta\n- Enter reinicia tras perder");
-  });
 
   document.getElementById("Start_game").addEventListener("click", () => {
     document.getElementById("START").style.display = "none";
