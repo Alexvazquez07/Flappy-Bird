@@ -185,7 +185,7 @@ function setupEventListeners() {
     }
 
     if (gameOver && (e.code === "Enter" || e.code === "Space")) {
-      location.reload();
+      resetGame();
     }
   });
 
