@@ -8,6 +8,23 @@
 </head>
 <body>
     <canvas id="gameCanvas" width="600px" height="800px"></canvas>
+    <div id="START" class="game-start-screen">
+        <h1>Flappy Bird</h1>
+        <button id="Start_game" class="btn-start-screen">Comenzar</button>
+        <button id="see_controls" class="btn-start-screen">Controles</button>
+        <div id="controlsModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" id="closeModal">&times;</span>
+                <h2>Controles del juego</h2>
+                <ul>
+                    <li><strong>Barra espaciadora, W, Flecha arriba o Click Izquierdo</strong> para <strong class="saltartext">saltar</strong></li>
+                    <br>
+                    <li><strong>Enter</strong> para reiniciar tras gameover</li>
+                </ul>
+            </div>
+        </div>
+        <img src="img/Pajaro-removebg-preview.png" alt="Pajaro" class="bird-image">
+    </div>
     <button id="restartBtn" style="display:none; position:absolute; top: 445px">Reiniciar</button>
     <script src="main.js"></script>
 </body>

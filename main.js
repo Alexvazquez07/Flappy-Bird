@@ -1,15 +1,41 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// === VARIABLES GLOBALES ===
 let frames = 0;
-const GRAVITY = 0.2 ;
-const JUMP = -5 ;
 let gameOver = false;
-
+let score = 0;
 let highScore = localStorage.getItem("highScore_flappy") || 0;
-// Pájaro
+
+const GRAVITY = 0.2;
+const JUMP = -5;
+const pipeGap = 150;
+const pipeWidth = 50;
+let pipeSpeed = 3;
+
+const pipes = [];
+
 const birdImage = new Image();
 birdImage.src = "img/Pajaro-removebg-preview.png";
+
+// === REINICIAR JUEGO ===
+function resetGame() {
+  frames = 0;
+  score = 0;
+  gameOver = false;
+  pipeSpeed = 3;
+  pipes.length = 0;
+
+  bird.y = 200;
+  bird.velocity = 0;
+  bird.angle = 0;
+
+  document.getElementById("restartBtn").style.display = "none";
+
+  loop(); // reinicia el bucle
+}
+
+// === OBJETOS DEL JUEGO ===
 const bird = {
   x: 60,
   y: 200,
@@ -17,75 +43,59 @@ const bird = {
   h: 30,
   angle: 0,
   velocity: 0,
+
   update() {
     this.velocity += GRAVITY;
     this.y += this.velocity;
 
-    // Inclinación al subir o caer
     if (this.velocity < 0) {
-      this.angle = -30; // Subiendo (en grados)
+      this.angle = -30;
     } else {
-      this.angle += 2; // Cayendo
-      if (this.angle > 90) this.angle = 90; // Máxima inclinación
+      this.angle += 2;
+      if (this.angle > 90) this.angle = 90;
     }
 
-    // Límite inferior (suelo)
     if (this.y + this.h >= canvas.height) {
       gameOver = true;
     }
   },
+
   draw() {
     ctx.save();
     ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
-    ctx.rotate(this.angle * Math.PI / 180); // Convertimos grados a radianes
+    ctx.rotate(this.angle * Math.PI / 180);
     ctx.drawImage(birdImage, -this.w / 2, -this.h / 2, this.w, this.h);
     ctx.restore();
   },
+
   jump() {
     this.velocity = JUMP;
-    this.angle = -20; // Al saltar, se inclina hacia arriba
+    this.angle = -20;
   }
 };
 
-
-// Tuberías
-const pipes = [];
-const pipeGap = 150;
-const pipeWidth = 50;
-let score = 0;
-
+// === FUNCIONES DE PIPES ===
 function createPipe() {
   const topHeight = Math.floor(Math.random() * 475) + 50;
   const bottomY = topHeight + pipeGap;
   pipes.push({
     x: canvas.width,
     top: topHeight,
-    bottom: bottomY
+    bottom: bottomY,
+    passed: false
   });
 }
-
-function drawPipes() {
-  ctx.fillStyle = "rgba(211, 84, 0, 0.8)"; // Color de las tuberías
-  pipes.forEach(pipe => {
-    ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-    ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
-    pipe.bottom = pipe.top + pipeGap; // Asegurar que el espacio entre tuberías sea constante
-  });
-}
-let pipeSpeed = 3;
 
 function updatePipes() {
   pipes.forEach((pipe, index) => {
-    pipe.x -= pipeSpeed; ;
+    pipe.x -= pipeSpeed;
 
-    if (pipe.x + pipeWidth < bird.x && !pipe.passed) {
+    if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
       pipe.passed = true;
       score++;
-      if (score % 4 === 0) {
-        pipeSpeed += 0.5; // Aumentar velocidad cada 7 puntos
-      }
+      if (score % 4 === 0) pipeSpeed += 0.5;
     }
-    // Colisión
+
     if (
       bird.x < pipe.x + pipeWidth &&
       bird.x + bird.w > pipe.x &&
@@ -94,97 +104,130 @@ function updatePipes() {
       gameOver = true;
     }
 
-    // Aumentar puntuación
-    if (pipe.x + pipeWidth < bird.x && !pipe.passed) {
-      pipe.passed = true;
-      score++;
-    }
-
-    // Eliminar tuberías fuera de la pantalla
     if (pipe.x + pipeWidth < 0) {
       pipes.splice(index, 1);
     }
   });
 }
 
+function drawPipes() {
+  ctx.fillStyle = "rgba(211, 84, 0, 0.8)";
+  pipes.forEach(pipe => {
+    ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+    ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
+  });
+}
+
+// === FUNCIONES DE DIBUJO ===
 function drawScore() {
   ctx.fillStyle = "black";
-  ctx.font = " bold 34px sans-serif";
-  ctx.textAlign = "center"; // 🔄 Centrado horizontal
-    ctx.fillText(`${score}`, canvas.width / 2, 50); // 🔄 Centrado horizontal
-
+  ctx.font = "bold 34px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText(`${score}`, canvas.width / 2, 50);
 }
-// Loop principal
-function loop() {
-  //if (frames % 300 === 0) {
-  //  pipeSpeed += 0.2;
-  //}
 
-  if (gameOver) {
-  // Fondo rojo translúcido
+function drawGameOver() {
   ctx.fillStyle = "rgba(255,0,0,0.8)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctx.fillStyle = "white";
-  ctx.textAlign = "center"; // 🔄 Centrado horizontal
+  ctx.textAlign = "center";
 
-  // Game Over
   ctx.font = "bold 36px sans-serif";
   ctx.fillText("Game Over", canvas.width / 2, 280);
 
-  // Score encima de mensaje
   ctx.font = "24px sans-serif";
   ctx.fillText(`Score: ${score}`, canvas.width / 2, 320);
 
-  // High Score
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore_flappy", highScore);
   }
-  // Mostrar High Score
-  ctx.font = "24px sans-serif";
+
   ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 350);
 
-  // Mostrar Botón de reinicio
   document.getElementById("restartBtn").style.display = "block";
-  const restartBtn = document.getElementById("restartBtn");
-    restartBtn.addEventListener("click", () => {
-    location.reload(); // Recarga la página
-  });
-
-  document.addEventListener("keydown", e => {
-  if (e.code === "Enter" || e.code === "Space") {
-    location.reload(); // Recarga la página al presionar Enter o Space
-  }
-  });
-  return;
 }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+// === BUCLE PRINCIPAL ===
+function update() {
   bird.update();
-  bird.draw();
-
-  if (frames % 130 === 0) {
-    createPipe();
-  }
-
   updatePipes();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bird.draw();
   drawPipes();
   drawScore();
+}
+
+function loop() {
+  if (gameOver) {
+    drawGameOver();
+    return;
+  }
+
+  if (frames % 130 === 0) createPipe();
+
+  update();
+  draw();
 
   frames++;
   requestAnimationFrame(loop);
 }
 
-document.addEventListener("keydown", e => {
-  if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW" || e.code === "Keyw") {
-    bird.jump();
-  }
+// === CONTROLADORES DE EVENTOS ===
+function setupEventListeners() {
+  document.addEventListener("keydown", e => {
+    if (["Space", "ArrowUp", "KeyW", "Keyw"].includes(e.code)) {
+      bird.jump();
+    }
+
+    if (gameOver && (e.code === "Enter" || e.code === "Space")) {
+      location.reload();
+    }
+  });
+
+  document.addEventListener("mousedown", e => {
+    if (e.button === 0) bird.jump();
+  });
+
+  document.getElementById("restartBtn").addEventListener("click", resetGame);
+
+  document.getElementById("see_controls").addEventListener("click", () => {
+    alert("Controles:\n\n- Espacio / W / Flecha arriba para saltar\n- Click izquierdo también salta\n- Enter reinicia tras perder");
+  });
+
+  document.getElementById("Start_game").addEventListener("click", () => {
+    document.getElementById("START").style.display = "none";
+    canvas.style.display = "block";
+    loop();
+  });
+}
+
+const controlsModal = document.getElementById("controlsModal");
+const closeModalBtn = document.getElementById("closeModal");
+const seeControlsBtn = document.getElementById("see_controls");
+
+seeControlsBtn.addEventListener("click", () => {
+controlsModal.style.display = "flex";
 });
-document.addEventListener("mousedown", e => {
-  if (e.button === 0) { // 0 es el botón izquierdo
-    bird.jump();
+
+closeModalBtn.addEventListener("click", () => {
+controlsModal.style.display = "none";
+});
+
+window.addEventListener("click", (e) => {
+  if (e.target === controlsModal) {
+    controlsModal.style.display = "none";
   }
 });
 
-loop();
+// === INICIALIZACIÓN ===
+function init() {
+  canvas.style.display = "none";
+  setupEventListeners();
+}
+
+init();
