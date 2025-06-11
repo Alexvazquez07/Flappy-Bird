@@ -134,17 +134,17 @@ function drawGameOver() {
   ctx.textAlign = "center";
 
   ctx.font = "bold 36px sans-serif";
-  ctx.fillText("Game Over", canvas.width / 2, 280);
+  ctx.fillText("Has Chocado", canvas.width / 2, 280);
 
   ctx.font = "24px sans-serif";
-  ctx.fillText(`Score: ${score}`, canvas.width / 2, 320);
+  ctx.fillText(`Puntuacion: ${score}`, canvas.width / 2, 320);
 
   if (score > highScore) {
     highScore = score;
     localStorage.setItem("highScore_flappy", highScore);
   }
 
-  ctx.fillText(`High Score: ${highScore}`, canvas.width / 2, 350);
+  ctx.fillText(`Puntuacion Maxima ${highScore}`, canvas.width / 2, 350);
 
   document.getElementById("restartBtn").style.display = "block";
 }
