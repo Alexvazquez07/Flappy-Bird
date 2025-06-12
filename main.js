@@ -1,6 +1,7 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+
 // 🎵 Audios
 const gameOverSound = new Audio ("audio/game-over.mp3");
 const pointSound = new Audio ("audio/point.mp3");
@@ -86,11 +87,11 @@ const bird = {
 };
 
 // === FUNCIONES DE PIPES ===
-function createPipe() {
+function createPipe(xPosition) {
   const topHeight = Math.floor(Math.random() * 475) + 50;
   const bottomY = topHeight + pipeGap;
   pipes.push({
-    x: canvas.width,
+    x: typeof xPosition === "number" ? xPosition : canvas.width,
     top: topHeight,
     bottom: bottomY,
     passed: false
@@ -186,9 +187,12 @@ function loop() {
     drawGameOver();
     return;
   }
-
-  if (frames % 130 === 0) createPipe();
-
+  if (
+    pipes.length === 0 ||
+    (pipes[pipes.length - 1].x < canvas.width - 350)
+  ) {
+    createPipe();
+  }
   update();
   draw();
 
