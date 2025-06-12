@@ -1,6 +1,13 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+// 🎵 Audios
+const gameOverSound = new Audio ("audio/game-over.mp3");
+const pointSound = new Audio ("audio/point.mp3");
+// Opcional: que se repita la música de fondo
+pointSound.preload = "auto";
+pointSound.volume = 0.7; // Puedes ajustar el volumen
+
 // === VARIABLES GLOBALES ===
 let frames = 0;
 let gameOver = false;
@@ -56,6 +63,10 @@ const bird = {
     }
 
     if (this.y + this.h >= canvas.height) {
+      if (!gameOver) {
+        gameOverSound.currentTime = 0;
+        gameOverSound.play();
+      }
       gameOver = true;
     }
   },
@@ -90,17 +101,25 @@ function updatePipes() {
   pipes.forEach((pipe, index) => {
     pipe.x -= pipeSpeed;
 
-    if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
-      pipe.passed = true;
-      score++;
-      if (score % 4 === 0) pipeSpeed += 0.5;
-    }
+    if (!gameOver && !pipe.passed && bird.x + bird.w > pipe.x && bird.x < pipe.x + pipeWidth && bird.y > pipe.top && bird.y + bird.h < pipe.bottom) {
+    pipe.passed = true;
+    score++;
+    pointSound.pause();
+    pointSound.currentTime = 0;
+    pointSound.play();
+
+  if (score % 4 === 0) pipeSpeed += 0.5;
+}
 
     if (
       bird.x < pipe.x + pipeWidth &&
       bird.x + bird.w > pipe.x &&
       (bird.y < pipe.top || bird.y + bird.h > pipe.bottom)
     ) {
+      if (!gameOver) {
+        gameOverSound.currentTime = 0;
+        gameOverSound.play();
+      }
       gameOver = true;
     }
 
@@ -190,7 +209,7 @@ function setupEventListeners() {
   });
 
   document.addEventListener("mousedown", e => {
-    if (e.button === 0) bird.jump();
+    if (!gameOver && e.button === 0) bird.jump();
   });
 
   document.getElementById("restartBtn").addEventListener("click", resetGame);
