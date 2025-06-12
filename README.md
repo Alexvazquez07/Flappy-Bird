@@ -8,6 +8,9 @@ abre el archivo `index.html` en tu navegador
 ## 📦 Estructura del proyecto
 ```
 Flappy-Bird/
+├──audio/
+    ├──game-over.mp3
+    ├──point.mp3
 ├── img/
     ├──pajaro.png
 ├── index.html # Estructura principal del juego
