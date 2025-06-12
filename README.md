@@ -8,6 +8,8 @@ abre el archivo `index.html` en tu navegador
 ## 📦 Estructura del proyecto
 ```
 Flappy-Bird/
+├── img/
+    ├──pajaro.png
 ├── index.html # Estructura principal del juego
 ├── style.css # Estilos y animaciones
 ├── main.js # Lógica del juego
