@@ -23,8 +23,8 @@ let pipeSpeed = 3;
 
 const pipes = [];
 
-const birdImage = new Image();
-birdImage.src = "img/Pajaro-removebg-preview.png";
+const birdSprite = new Image();
+birdSprite.src = "img/bird-sprite.png";
 
 // === REINICIAR JUEGO ===
 function resetGame() {
@@ -47,36 +47,59 @@ function resetGame() {
 const bird = {
   x: 60,
   y: 200,
-  w: 40,
+  w: 40,  // escalado visible del frame
   h: 30,
-  angle: 0,
   velocity: 0,
+  angle: 0,
+
+  frameIndex: 0,
+  frameDelay: 0,
+  totalFrames: 4,
+  columns: 2,  // 2 columnas en el sprite
+  frameWidth: 160, // ancho real de un frame
+  frameHeight: 120, // alto real de un frame
 
   update() {
-    this.velocity += GRAVITY;
-    this.y += this.velocity;
+  this.velocity += GRAVITY;
+  this.y += this.velocity;
 
-    if (this.velocity < 0) {
-      this.angle = -30;
-    } else {
-      this.angle += 2;
-      if (this.angle > 90) this.angle = 90;
+  if (this.velocity < 0) {
+    this.angle = -30;
+    // Animación al subir: alterna entre frames 0, 1, 2
+    this.frameDelay++;
+    if (this.frameDelay % 10 === 0) {
+      // Cambia solo entre los 3 primeros frames (alas en movimiento)
+      this.frameIndex = (this.frameIndex + 1) % 3;
     }
+  } else {
+    // Al caer: alas arriba fijo (frame 0)
+    this.angle += 2;
+    if (this.angle > 90) this.angle = 90;
+    this.frameIndex = 0;
+  }
 
-    if (this.y + this.h >= canvas.height) {
-      if (!gameOver) {
-        gameOverSound.currentTime = 0;
-        gameOverSound.play();
-      }
-      gameOver = true;
+  if (this.y + this.h >= canvas.height) {
+    if (!gameOver) {
+      gameOverSound.currentTime = 0;
+      gameOverSound.play();
     }
-  },
-
+    gameOver = true;
+  }
+},
   draw() {
+    const col = this.frameIndex % this.columns;
+    const row = Math.floor(this.frameIndex / this.columns);
+    const sx = col * this.frameWidth;
+    const sy = row * this.frameHeight;
+
     ctx.save();
     ctx.translate(this.x + this.w / 2, this.y + this.h / 2);
     ctx.rotate(this.angle * Math.PI / 180);
-    ctx.drawImage(birdImage, -this.w / 2, -this.h / 2, this.w, this.h);
+    ctx.drawImage(
+      birdSprite,
+      sx, sy, this.frameWidth, this.frameHeight,
+      -this.w / 2, -this.h / 2, this.w, this.h
+    );
     ctx.restore();
   },
 
